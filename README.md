@@ -8,6 +8,7 @@ This is a template to just simply make you up and running. It supports:
 
 Also you should be aware of that this template will install the latest version of jquery, bootstrap, modernizr, and normalize.css as soon as you run the "bower i" command in your terminal. To modify that, just edit bower.json file. Note that jquery isn't present due to it comes bundled with bootstrap already.
 
+To use it you need to have npm, bower and git software installed in your system.
 To get you started, just choose the folder you want the website to be in, and execure
 ```
 git clone https://github.com/Andylime/website-template.git && cd website-template && npm i && bower i && gulp

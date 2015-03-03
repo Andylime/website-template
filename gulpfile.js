@@ -1,5 +1,3 @@
-//git repo this.
-
 "use strict";
 
 var gulp = require('gulp'),
