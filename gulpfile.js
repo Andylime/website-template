@@ -1,3 +1,9 @@
+// browser-sync?
+// jade/html tasks
+// fonts - read:false?
+// clean -> rimraf
+// no need for merge, filter, gulpif
+
 "use strict";
 
 var gulp = require('gulp'),
@@ -50,11 +56,7 @@ var paths = {
 	"temp": {
 		"jade": "temp/jade/",
 		"stylus": "temp/stylus/",
-		"coffee": "temp/coffee/",
-		"build": {
-			"css": "temp/.building/css/",
-			"js": "temp/.building/js/"
-		}
+		"coffee": "temp/coffee/"
 	}
 };
 
@@ -104,19 +106,10 @@ var paths = {
 			.pipe(gulp.dest(paths.dev.html));
 	});
 
-// =clean_css
-	gulp.task('clean_css', ['css'], function(){
-		gulp.src(paths.temp.build.css, { read: false })
-			.pipe(clean());
-	});
-
 // =css
 	gulp.task('css', ['stylust'], function(){
-			return merge(
-				gulp.src(paths.dev.css + "**/*.css"),
-				gulp.src(paths.temp.stylus + "**/*.css"))
+		return gulp.src([paths.dev.css + "**/*.css", paths.temp.stylus + "**/*.css"])
 			.pipe(plumber())
-			.pipe(gulp.dest(paths.temp.build.css))
 			.pipe(concatCss("bundle.css"))
 			.pipe(prefixer({
 				browsers: ['last 15 versions'],
@@ -141,17 +134,9 @@ var paths = {
 			.pipe(gulp.dest(paths.temp.stylus));
 	});
 
-// =clean_js
-	gulp.task('clean_js', ['javascr'], function(){
-		gulp.src(paths.temp.build.js, { read: false })
-			.pipe(clean());
-	});
-
 // =javascript
 	gulp.task("javascr", ['coffee'], function(){
-		return merge(
-				gulp.src(paths.dev.js + "**/*.js"),
-				gulp.src(paths.temp.build.coffee + "**/*.coffee"))
+		return gulp.src([paths.dev.js + "**/*.js", paths.temp.coffee + "**/*.js"])
 			.pipe(plumber())
 			.pipe(concatJs("bundle.js", {newLine: ';'}))
 			.pipe(gulp.dest(paths.production.js))
@@ -163,7 +148,7 @@ var paths = {
 
 // =coffee
 	gulp.task("coffee", function(){
-		return gulp.src(paths.dev.coffee + "*.coffee")
+		return gulp.src(paths.dev.coffee + "**/*.coffee")
 			.pipe(plumber())
 			.pipe(newer({
 				dest: paths.temp.coffee,
@@ -205,16 +190,16 @@ var paths = {
 
 // =watch
 	gulp.task('watch', function(){
-		gulp.watch(paths.dev.css + "**/*.css", ["clean_css"]);
-		gulp.watch(paths.dev.stylus + "**/*.styl", ["clean_css"]);
+		gulp.watch(paths.dev.css + "**/*.css", ["css"]);
+		gulp.watch(paths.dev.stylus + "**/*.styl", ["css"]);
 		gulp.watch(paths.dev.html + "*.html", ["html"]);
 		gulp.watch(paths.dev.jade + "**/*.jade", ["html"]);
 		gulp.watch("bower.json", ["bower", "html"]);
-		gulp.watch(paths.dev.js + "**/*.js", ["clean_js"]);
-		gulp.watch(paths.dev.coffee + "**/*.coffee", ["clean_js"]);
+		gulp.watch(paths.dev.js + "**/*.js", ["javascr"]);
+		gulp.watch(paths.dev.coffee + "**/*.coffee", ["javascr"]);
 		gulp.watch(paths.dev.images + "**/*", ["image"]);
 		gulp.watch(paths.dev.fonts + "**", ["fonts"]);
 	});
 
 // =default
-		gulp.task('default', ['bower', 'html', 'clean_css', 'clean_js', 'image', 'fonts', 'connect', 'watch']);
+		gulp.task('default', ['bower', 'html', 'css', 'javascr', 'image', 'fonts', 'connect', 'watch']);
