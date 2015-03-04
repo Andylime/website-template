@@ -1,0 +1,1 @@
+Optimized images placed here.

@@ -1,8 +1,4 @@
 // browser-sync?
-// jade/html tasks
-// fonts - read:false?
-// clean -> rimraf
-// no need for merge, filter, gulpif
 
 "use strict";
 
@@ -24,11 +20,8 @@ var gulp = require('gulp'),
 	rename = require("gulp-rename"),
 	stylus = require('gulp-stylus'),
 	uglify = require('gulp-uglify'),
-	clean = require('gulp-clean'),
-	merge = require('merge-stream'),
 	useref = require('gulp-useref'),
 	gulpif = require('gulp-if'),
-	gulpFilter = require('gulp-filter'),
 	wiredep = require('wiredep').stream;
 
 // custom variables.
@@ -65,13 +58,8 @@ var paths = {
 
 // =html
 	gulp.task('html', ['jade'], function(){
-		var assets = useref.assets();
 		return gulp.src(paths.dev.html + "*.html")
 			.pipe(plumber())
-			.pipe(newer(paths.production.html))
-			.pipe(assets)
-			.pipe(assets.restore())
-			.pipe(useref())
 			.pipe(minifyHTML({
 				empty: true,
 				conditionals: true,
@@ -83,27 +71,31 @@ var paths = {
 
 // =jade
 	gulp.task('jade', function(){
-		return gulp.src(paths.dev.jade + "*.jade")
+		return gulp.src(paths.dev.jade + "**/*.jade")
 			.pipe(plumber())
-			.pipe(newer({
-				dest: paths.temp.jade,
-				ext: ".html"
-			}))
-			.pipe(jade({
-				pretty: true
-			}))
+			.pipe(jade({ pretty: true }))
 			.pipe(gulp.dest(paths.dev.html))
 			.pipe(gulp.dest(paths.temp.jade));
 	});
 
 // =bower
-	gulp.task('bower', function(){
+	gulp.task('bower', ['jade'], function(){
+		var assets = useref.assets();
 		return gulp.src(paths.dev.html + "*.html")
 			.pipe(plumber())
 			.pipe(wiredep({
 				directory: paths.dev.vendor
 			}))
-			.pipe(gulp.dest(paths.dev.html));
+			.pipe(assets)
+			.pipe(assets.restore())
+			.pipe(useref())
+			.pipe(minifyHTML({
+				empty: true,
+				conditionals: true,
+				spare:true
+			}))
+			.pipe(gulp.dest(paths.production.html))
+			.pipe(connect.reload());
 	});
 
 // =css
@@ -120,16 +112,12 @@ var paths = {
 			.pipe(minifyCSS(""))
 			.pipe(gulp.dest(paths.production.css))
 			.pipe(connect.reload());
-		});
+	});
 
 // =stylus
 	gulp.task('stylust', function(){
-		return gulp.src(paths.dev.stylus + "*.styl")
+		return gulp.src(paths.dev.stylus + "**/*.styl")
 			.pipe(plumber())
-			.pipe(newer({
-				dest: paths.temp.stylus,
-				ext: ".css"
-			}))
 			.pipe(stylus())
 			.pipe(gulp.dest(paths.temp.stylus));
 	});
@@ -150,10 +138,6 @@ var paths = {
 	gulp.task("coffee", function(){
 		return gulp.src(paths.dev.coffee + "**/*.coffee")
 			.pipe(plumber())
-			.pipe(newer({
-				dest: paths.temp.coffee,
-				ext: ".js"
-			}))
 			.pipe(coffee())
 			.pipe(gulp.dest(paths.temp.coffee));
 	});
@@ -161,6 +145,7 @@ var paths = {
 // =images
 	gulp.task("image", function(){
 		return gulp.src(paths.dev.images + "**/*")
+			.pipe(plumber())
 			.pipe(newer("dist/imgs"))
 			.pipe(imagemin({
 				optimizationLevel: 5,
@@ -175,7 +160,9 @@ var paths = {
 
 // =fonts
 	gulp.task("fonts", function(){
-		return gulp.src(paths.dev.fonts + "/**")
+		return gulp.src(paths.dev.fonts + "**/*!(.mdt)")
+			.pipe(plumber())
+			.pipe(newer(paths.production.fonts))
 			.pipe(gulp.dest(paths.production.fonts));
 	});
 
@@ -183,7 +170,7 @@ var paths = {
 	gulp.task('connect', function() {
 		connect.server({
 			root: paths.production.html,
-			port: 1337,
+			port: 9000,
 			livereload: true
 		});
 	});
@@ -194,12 +181,12 @@ var paths = {
 		gulp.watch(paths.dev.stylus + "**/*.styl", ["css"]);
 		gulp.watch(paths.dev.html + "*.html", ["html"]);
 		gulp.watch(paths.dev.jade + "**/*.jade", ["html"]);
-		gulp.watch("bower.json", ["bower", "html"]);
+		gulp.watch("bower.json", ["bower"]);
 		gulp.watch(paths.dev.js + "**/*.js", ["javascr"]);
 		gulp.watch(paths.dev.coffee + "**/*.coffee", ["javascr"]);
 		gulp.watch(paths.dev.images + "**/*", ["image"]);
-		gulp.watch(paths.dev.fonts + "**", ["fonts"]);
+		gulp.watch(paths.dev.fonts + "**/*", ["fonts"]);
 	});
 
 // =default
-		gulp.task('default', ['bower', 'html', 'css', 'javascr', 'image', 'fonts', 'connect', 'watch']);
+		gulp.task('default', ['bower', 'css', 'javascr', 'image', 'fonts', 'connect', 'watch']);
