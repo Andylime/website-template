@@ -58,28 +58,6 @@ var paths = {
 
 // =html
 	gulp.task('html', ['jade'], function(){
-		return gulp.src(paths.dev.html + "*.html")
-			.pipe(plumber())
-			.pipe(minifyHTML({
-				empty: true,
-				conditionals: true,
-				spare:true
-			}))
-			.pipe(gulp.dest(paths.production.html))
-			.pipe(connect.reload());
-	});
-
-// =jade
-	gulp.task('jade', function(){
-		return gulp.src(paths.dev.jade + "**/*.jade")
-			.pipe(plumber())
-			.pipe(jade({ pretty: true }))
-			.pipe(gulp.dest(paths.dev.html))
-			.pipe(gulp.dest(paths.temp.jade));
-	});
-
-// =bower
-	gulp.task('bower', ['jade'], function(){
 		var assets = useref.assets();
 		return gulp.src(paths.dev.html + "*.html")
 			.pipe(plumber())
@@ -96,6 +74,15 @@ var paths = {
 			}))
 			.pipe(gulp.dest(paths.production.html))
 			.pipe(connect.reload());
+	});
+
+// =jade
+	gulp.task('jade', function(){
+		return gulp.src(paths.dev.jade + "**/*.jade")
+			.pipe(plumber())
+			.pipe(jade({ pretty: true }))
+			.pipe(gulp.dest(paths.dev.html))
+			.pipe(gulp.dest(paths.temp.jade));
 	});
 
 // =css
@@ -177,16 +164,12 @@ var paths = {
 
 // =watch
 	gulp.task('watch', function(){
-		gulp.watch(paths.dev.css + "**/*.css", ["css"]);
-		gulp.watch(paths.dev.stylus + "**/*.styl", ["css"]);
-		gulp.watch(paths.dev.html + "*.html", ["html"]);
-		gulp.watch(paths.dev.jade + "**/*.jade", ["html"]);
-		gulp.watch("bower.json", ["bower"]);
-		gulp.watch(paths.dev.js + "**/*.js", ["javascr"]);
-		gulp.watch(paths.dev.coffee + "**/*.coffee", ["javascr"]);
+		gulp.watch([paths.dev.css + "**/*.css", paths.dev.stylus + "**/*.styl"], ["css"]);
+		gulp.watch([paths.dev.html + "*.html", paths.dev.jade + "**/*.jade", "bower.json"], ["html"]);
+		gulp.watch([paths.dev.js + "**/*.js", paths.dev.coffee + "**/*.coffee"], ["javascr"]);
 		gulp.watch(paths.dev.images + "**/*", ["image"]);
 		gulp.watch(paths.dev.fonts + "**/*", ["fonts"]);
 	});
 
 // =default
-		gulp.task('default', ['bower', 'css', 'javascr', 'image', 'fonts', 'connect', 'watch']);
+		gulp.task('default', ['html', 'css', 'javascr', 'image', 'fonts', 'connect', 'watch']);
