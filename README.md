@@ -8,7 +8,7 @@ This is a template to just simply make you up and running. It supports:
 * image compression
 * bower plugins
 
-It compiles, concatenates, minifies this files and puts them into temp and public folders. Just compiled files it puts in the temp directory, and compiled, concatenated and minified files are placed in the public folders with the names `bundle` and `bundle.min`. Note that it concatenates all the .css and compiled .styl files into one file. The same is true for .coffee and .js files and .jade and .html files.
+It compiles, concatenates, minifies this files and puts them into temp and public folders. Just compiled files it puts in the temp directory, and compiled, concatenated and minified files are placed in the public folders with the names `bundle` and `bundle.min`. Note that it concatenates all the .css and compiled .styl files into one file. The same is true for .coffee and .js files, but .jade and .html files are go separately, so try to not to use the same .jade and .html file names.
 
 To use it you need to have npm, bower and git software installed in your system.
 
