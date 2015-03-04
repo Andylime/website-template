@@ -5,8 +5,10 @@ This is a template to just simply make you up and running. It supports:
 * jade files
 * stylus files
 * coffee files
-It compiles, concatenates, minifies this files and puts them into temp and public folders. If you want to use regular css, you can create your .css files inside styles folder.
-Also it can optimize images. As soon as gulp sees images in the `images` folder, it starts to optimize them while running other tasks.
+* image compression
+* bower plugins
+
+It compiles, concatenates, minifies this files and puts them into temp and public folders. Just compiled files it puts in the temp directory, and compiled, concatenated and minified files are placed in the public folders with the names `bundle` and `bundle.min`. Note that it concatenates all the .css and compiled .styl files into one file. The same is true for .coffee and .js files and .jade and .html files.
 
 To use it you need to have npm, bower and git software installed in your system.
 
