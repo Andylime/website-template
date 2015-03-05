@@ -1,3 +1,6 @@
+.gitignore
 .DS_Store
 node_modules
 app/bower_components
+*.sublime*
+website-template

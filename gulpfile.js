@@ -22,6 +22,8 @@ var gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	useref = require('gulp-useref'),
 	gulpif = require('gulp-if'),
+	rupture = require('rupture'),
+	nib = require('nib'),
 	wiredep = require('wiredep').stream;
 
 // custom variables.
@@ -64,6 +66,7 @@ var paths = {
 			.pipe(wiredep({
 				directory: paths.dev.vendor
 			}))
+			.pipe(gulp.dest(paths.dev.html))
 			.pipe(assets)
 			.pipe(assets.restore())
 			.pipe(useref())
@@ -105,7 +108,9 @@ var paths = {
 	gulp.task('stylust', function(){
 		return gulp.src(paths.dev.stylus + "**/*.styl")
 			.pipe(plumber())
-			.pipe(stylus())
+			.pipe(stylus({
+				use: [nib(), rupture()]
+			}))
 			.pipe(gulp.dest(paths.temp.stylus));
 	});
 
