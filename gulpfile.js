@@ -24,6 +24,7 @@ var gulp = require('gulp'),
 	gulpif = require('gulp-if'),
 	rupture = require('rupture'),
 	nib = require('nib'),
+	cmq = require('gulp-combine-media-queries'),
 	wiredep = require('wiredep').stream;
 
 // custom variables.
@@ -49,9 +50,9 @@ var paths = {
 		"fonts": "public/fonts/"
 	},
 	"temp": {
-		"jade": "temp/jade/",
-		"stylus": "temp/stylus/",
-		"coffee": "temp/coffee/"
+		"jade": "app/jade-temp/",
+		"stylus": "app/stylus-temp/",
+		"coffee": "app/coffee-temp/"
 	}
 };
 
@@ -93,6 +94,7 @@ var paths = {
 		return gulp.src([paths.dev.css + "**/*.css", paths.temp.stylus + "**/*.css"])
 			.pipe(plumber())
 			.pipe(concatCss("bundle.css"))
+			.pipe(cmq())
 			.pipe(prefixer({
 				browsers: ['last 15 versions'],
 				cascade: true
